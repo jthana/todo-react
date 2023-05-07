@@ -29,6 +29,22 @@ function App() {
     setAddTodoItem('');
   };
 
+  const renderProgressBar = () => {
+    const allItems = value.length;
+    const doneItems = value.filter(item => item.status == true).length;
+
+    const progressLevel = doneItems > 0 ? (doneItems / allItems) * 100 : 0;
+
+    return (
+      <div className="progress-bar">
+        <div
+          className="progress-bar__running"
+          style={{ width: `${progressLevel}%` }}
+        />
+      </div>
+    );
+  };
+
   const renderStatusFilter = () => {
     return (
       <ul>
@@ -77,6 +93,7 @@ function App() {
   return (
     <div>
       <h1>Redux todo example</h1>
+      {renderProgressBar()}
       {renderStatusFilter()}
       {renderTodoItem()}
       {addTodoRender()}
