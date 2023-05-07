@@ -3,6 +3,7 @@ import type { RootState } from '.';
 
 interface TodoState {
   value: TodoItem[];
+  filteredValue: TodoItem[];
 }
 
 export interface TodoItem {
@@ -12,14 +13,35 @@ export interface TodoItem {
   status: boolean;
 }
 
+export const FILTER_ALL_ITEMS = '';
+export const FILTER_DONE_ITEMS = 'done';
+export const FILTER_UNDONE_ITEMS = 'undone';
+
 const initialState: TodoState = {
   value: [],
+  filteredValue: [],
 };
 
 export const todoSlice = createSlice({
   name: 'todo',
   initialState,
   reducers: {
+    getFilterItems: (state, action: PayloadAction<string>) => {
+      switch (action.payload) {
+        case FILTER_DONE_ITEMS:
+          state.filteredValue = state.value.filter(item => item.status == true);
+          break;
+        case FILTER_UNDONE_ITEMS:
+          state.filteredValue = state.value.filter(
+            item => item.status == false
+          );
+          break;
+        case FILTER_ALL_ITEMS:
+        default:
+          state.filteredValue = [];
+          break;
+      }
+    },
     addItem: (state, action: PayloadAction<string>) => {
       if (state.value.length === 0) {
         state.value.push({
@@ -62,8 +84,13 @@ export const todoSlice = createSlice({
   },
 });
 
-export const { addItem, updateItem, deleteItem, updateItemStatus } =
-  todoSlice.actions;
+export const {
+  getFilterItems,
+  addItem,
+  updateItem,
+  deleteItem,
+  updateItemStatus,
+} = todoSlice.actions;
 
 export const selectTodo = (state: RootState) => state.todo.value;
 export default todoSlice.reducer;

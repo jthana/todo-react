@@ -32,32 +32,16 @@ export const TodoItemComponent = ({
     setUpdateMode(false);
   };
 
-  const handleOnUpdateCancel = () => {
-    setUpdateMode(false);
-  };
-
   const handleUpdateMode = () => {
     setUpdateMode(!updateMode);
     setItemToggle(false);
-  };
-
-  const handleItemToggle = () => {
-    setItemToggle(!itemToggle);
-  };
-
-  const handleOnDelete = () => {
-    dispatch(deleteItem(id));
-  };
-
-  const handleUpdateProgress = () => {
-    dispatch(updateItemStatus({ id, sequence, value, status: !status }));
   };
 
   const renderToggleOption = () => {
     return (
       <div>
         <div onClick={handleUpdateMode}>EDIT</div>
-        <div onClick={handleOnDelete}>DELETE</div>
+        <div onClick={() => dispatch(deleteItem(id))}>DELETE</div>
       </div>
     );
   };
@@ -75,14 +59,18 @@ export const TodoItemComponent = ({
           />
         </div>
         <button type="submit">Submit</button>
-        <button onClick={handleOnUpdateCancel}>Cancel</button>
+        <button onClick={() => setUpdateMode(false)}>Cancel</button>
       </form>
     );
   };
 
   const renderStatusOption = () => {
     return (
-      <div onClick={handleUpdateProgress}>
+      <div
+        onClick={() =>
+          dispatch(updateItemStatus({ id, sequence, value, status: !status }))
+        }
+      >
         status: {status ? 'tick' : 'untick'}
       </div>
     );
@@ -96,7 +84,7 @@ export const TodoItemComponent = ({
         <div>id: {id}</div>
         <div>sequence: {sequence}</div>
         <div>value: {value}</div>
-        <div onClick={handleItemToggle}>setting</div>
+        <div onClick={() => setItemToggle(!itemToggle)}>setting</div>
         {itemToggle ? renderToggleOption() : null}
       </div>
     );
