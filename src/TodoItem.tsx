@@ -1,9 +1,19 @@
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { useAppDispatch } from './store/hooks';
 
-import { TodoItem, deleteItem, updateItem } from './store/todoSlice';
+import {
+  TodoItem,
+  deleteItem,
+  updateItem,
+  updateItemStatus,
+} from './store/todoSlice';
 
-export const TodoItemComponent = ({ id, sequence, value, done }: TodoItem) => {
+export const TodoItemComponent = ({
+  id,
+  sequence,
+  value,
+  status,
+}: TodoItem) => {
   const [itemToggle, setItemToggle] = useState(false);
   const [updateMode, setUpdateMode] = useState(false);
   const [updateTodoItem, setUpdateTodoItem] = useState(value);
@@ -18,7 +28,7 @@ export const TodoItemComponent = ({ id, sequence, value, done }: TodoItem) => {
   const handleOnUpdateSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    dispatch(updateItem({ id, sequence, done, value: updateTodoItem }));
+    dispatch(updateItem({ id, sequence, status, value: updateTodoItem }));
     setUpdateMode(false);
   };
 
@@ -37,6 +47,10 @@ export const TodoItemComponent = ({ id, sequence, value, done }: TodoItem) => {
 
   const handleOnDelete = () => {
     dispatch(deleteItem(id));
+  };
+
+  const handleUpdateProgress = () => {
+    dispatch(updateItemStatus({ id, sequence, value, status: !status }));
   };
 
   const renderToggleOption = () => {
@@ -66,10 +80,19 @@ export const TodoItemComponent = ({ id, sequence, value, done }: TodoItem) => {
     );
   };
 
+  const renderStatusOption = () => {
+    return (
+      <div onClick={handleUpdateProgress}>
+        status: {status ? 'tick' : 'untick'}
+      </div>
+    );
+  };
+
   const renderTodoItem = () => {
     return (
       // temp style
       <div style={{ marginBottom: 10 }}>
+        {renderStatusOption()}
         <div>id: {id}</div>
         <div>sequence: {sequence}</div>
         <div>value: {value}</div>

@@ -9,7 +9,7 @@ export interface TodoItem {
   id: number;
   sequence: number;
   value: string;
-  done: boolean;
+  status: boolean;
 }
 
 const initialState: TodoState = {
@@ -26,7 +26,7 @@ export const todoSlice = createSlice({
           id: 1,
           sequence: 1,
           value: action.payload,
-          done: false,
+          status: false,
         });
 
         return;
@@ -37,7 +37,7 @@ export const todoSlice = createSlice({
         id: lastItemValue.id + 1,
         sequence: lastItemValue.sequence + 1,
         value: action.payload,
-        done: false,
+        status: false,
       };
 
       state.value.push(newState);
@@ -52,7 +52,7 @@ export const todoSlice = createSlice({
     updateItemStatus: (state, action: PayloadAction<TodoItem>) => {
       state.value.map(item => {
         if (item.id === action.payload.id) {
-          item.done = !action.payload.done;
+          item.status = action.payload.status;
         }
       });
     },
@@ -62,7 +62,8 @@ export const todoSlice = createSlice({
   },
 });
 
-export const { addItem, updateItem, deleteItem } = todoSlice.actions;
+export const { addItem, updateItem, deleteItem, updateItemStatus } =
+  todoSlice.actions;
 
 export const selectTodo = (state: RootState) => state.todo.value;
 export default todoSlice.reducer;
