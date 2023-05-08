@@ -1,5 +1,6 @@
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { useAppDispatch } from './store/hooks';
+import { BsThreeDots } from 'react-icons/bs';
 
 import {
   TodoItem,
@@ -7,6 +8,8 @@ import {
   updateItem,
   updateItemStatus,
 } from './store/todoSlice';
+
+import './TodoItem.scss';
 
 export const TodoItemComponent = ({
   id,
@@ -37,55 +40,82 @@ export const TodoItemComponent = ({
     setItemToggle(false);
   };
 
+  const renderStatusOption = () => {
+    return (
+      <label className="todo-item__value__checkbox__wrapper">
+        <input
+          type="checkbox"
+          onChange={() =>
+            dispatch(updateItemStatus({ id, sequence, value, status: !status }))
+          }
+          checked={status}
+          className="todo-item__value__checkbox__input"
+        />
+        <span className="todo-item__value__checkbox__checkmark"></span>
+      </label>
+    );
+  };
+
   const renderToggleOption = () => {
     return (
-      <div>
-        <div onClick={handleUpdateMode}>EDIT</div>
-        <div onClick={() => dispatch(deleteItem(id))}>DELETE</div>
+      <div className="todo-item__options__toggle-list">
+        <div
+          className="todo-item__options__toggle-list__edit"
+          onClick={handleUpdateMode}
+        >
+          Edit
+        </div>
+        <div
+          className="todo-item__options__toggle-list__delete"
+          onClick={() => dispatch(deleteItem(id))}
+        >
+          Delete
+        </div>
+      </div>
+    );
+  };
+
+  const renderTodoItem = () => {
+    const textStatus = status ? ' todo-item__value__text--checked' : '';
+
+    return (
+      <div className="todo-item-container">
+        <div className="todo-item__value">
+          {renderStatusOption()}
+          <div className={'todo-item__value__text' + textStatus}>{value}</div>
+        </div>
+
+        <div
+          className="todo-item__options"
+          onClick={() => setItemToggle(!itemToggle)}
+        >
+          <div className="todo-item__options__dots">
+            <BsThreeDots />
+          </div>
+          {itemToggle ? renderToggleOption() : null}
+        </div>
       </div>
     );
   };
 
   const renderUpdateMode = () => {
     return (
-      <form onSubmit={handleOnUpdateSubmit}>
-        <div>
-          <label>Update</label>
-          <input
-            type="text"
-            name="name"
-            value={updateTodoItem}
-            onChange={handleOnUpdateChange}
-          />
-        </div>
-        <button type="submit">Submit</button>
-        <button onClick={() => setUpdateMode(false)}>Cancel</button>
-      </form>
-    );
-  };
-
-  const renderStatusOption = () => {
-    return (
-      <div
-        onClick={() =>
-          dispatch(updateItemStatus({ id, sequence, value, status: !status }))
-        }
-      >
-        status: {status ? 'tick' : 'untick'}
-      </div>
-    );
-  };
-
-  const renderTodoItem = () => {
-    return (
-      // temp style
-      <div style={{ marginBottom: 10 }}>
-        {renderStatusOption()}
-        <div>id: {id}</div>
-        <div>sequence: {sequence}</div>
-        <div>value: {value}</div>
-        <div onClick={() => setItemToggle(!itemToggle)}>setting</div>
-        {itemToggle ? renderToggleOption() : null}
+      <div className="todo-item-container">
+        <form
+          onSubmit={handleOnUpdateSubmit}
+          className="todo-item-container__form"
+        >
+          <div className="todo-item-container__form__content">
+            <input
+              type="text"
+              name="name"
+              value={updateTodoItem}
+              onChange={handleOnUpdateChange}
+            />
+            <button type="submit">Save</button>
+          </div>
+          {/* <button onClick={() => setUpdateMode(false)}>Cancel</button> */}
+        </form>
       </div>
     );
   };
